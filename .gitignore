@@ -38,5 +38,5 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-### Grafana ####
-.grafana/data
+### Data ####
+.data/
