@@ -14,8 +14,10 @@ import java.net.InetSocketAddress;
 
 public final class Runner {
 
+    private static final int PORT = 8081;
+
     private static void startPrometheusServer(final PrometheusMeterRegistry registry) throws IOException {
-        final HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        final HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
         server.createContext("/metrics", httpExchange -> {
             String response = registry.scrape();
             httpExchange.sendResponseHeaders(200, response.getBytes().length);
