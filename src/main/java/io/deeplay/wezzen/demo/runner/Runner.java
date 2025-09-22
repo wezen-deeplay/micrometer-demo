@@ -31,10 +31,17 @@ public final class Runner {
         final PrometheusMeterRegistry meterRegistry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
         startPrometheusServer(meterRegistry);
         final Monitoring monitoring = new Micrometer(meterRegistry);
-        final Thread thread = new RemoteServiceConsumer(remoteService, monitoring);
+        final int threadsNum = 5;
+        final Thread[] threads = new Thread[threadsNum];
+        for (int i = 0; i < threadsNum; i++) {
+            final Thread thread = new RemoteServiceConsumer(remoteService, monitoring);
+            threads[i] = thread;
+            thread.start();
+        }
         System.out.println("Starting work");
-        thread.start();
-        thread.join();
+        for (final Thread thread : threads) {
+            thread.join();
+        }
         System.out.println("End work");
     }
 
