@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: demo-app
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    container_name: grafana
+    environment:
+      - ROOT_URL=https://localhost:3000
+      - GF_SECURITY_ADMIN_USER=Admin
+      - GF_SECURITY_ADMIN_PASSWORD=Admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - .data/grafana:/var/lib/grafana
+    image: grafana/grafana:8.0.0
+    depends_on:
+      - prometheus
+
+
+volumes:
+  grafana-data:
+    driver: local
