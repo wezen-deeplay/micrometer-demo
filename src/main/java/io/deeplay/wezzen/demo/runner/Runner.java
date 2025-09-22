@@ -20,6 +20,7 @@ public final class Runner {
         final HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
         server.createContext("/metrics", httpExchange -> {
             String response = registry.scrape();
+            httpExchange.getResponseHeaders().set("Content-Type", "text/plain; version=0.0.4; charset=utf-8");
             httpExchange.sendResponseHeaders(200, response.getBytes().length);
             try (OutputStream os = httpExchange.getResponseBody()) {
                 os.write(response.getBytes());
