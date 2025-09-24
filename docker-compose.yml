@@ -32,8 +32,3 @@ services:
     image: grafana/grafana:8.0.0
     depends_on:
       - prometheus
-
-
-volumes:
-  grafana-data:
-    driver: local
