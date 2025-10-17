@@ -1,5 +1,6 @@
 package io.deeplay.wezzen.demo.consumer;
 
+import io.deeplay.wezzen.demo.exceptions.RemoteServiceException;
 import io.deeplay.wezzen.demo.monitoring.Monitoring;
 import io.deeplay.wezzen.demo.service.RemoteService;
 
@@ -21,8 +22,11 @@ public final class RemoteServiceConsumer extends Thread {
             final long remoteRandomLong = remoteService.getRemoteRandomLong(min, max);
             monitoring.successfulQuery();
             return Optional.of(remoteRandomLong);
-        } catch (final Throwable throwable) {
+        } catch (final RemoteServiceException throwable) {
             monitoring.failedQuery(throwable);
+            return Optional.empty();
+        } catch (final Throwable throwable) {
+            monitoring.unexpectedFailedQuery(throwable);
             return Optional.empty();
         }
     }

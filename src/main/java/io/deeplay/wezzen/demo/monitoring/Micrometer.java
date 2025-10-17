@@ -1,5 +1,6 @@
 package io.deeplay.wezzen.demo.monitoring;
 
+import io.deeplay.wezzen.demo.exceptions.RemoteServiceException;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
@@ -20,10 +21,19 @@ public final class Micrometer implements Monitoring {
     }
 
     @Override
-    public void failedQuery(final Throwable reason) {
+    public void failedQuery(final RemoteServiceException exception) {
         Counter.builder("demo.failed.query.total")
                 .tag("thread", Thread.currentThread().getName())
-                .tag("reason", reason.getMessage())
+                .tag("errorId", Integer.toString(exception.getErrorId()))
+                .register(meterRegistry)
+                .increment();
+    }
+
+    @Override
+    public void unexpectedFailedQuery(final Throwable reason) {
+        Counter.builder("demo.failed.query.total")
+                .tag("thread", Thread.currentThread().getName())
+                .tag("errorId", "undefined")
                 .register(meterRegistry)
                 .increment();
     }
